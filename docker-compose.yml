@@ -1,26 +1,26 @@
 version: '3.7'
 
 services:
-  postgres:
+  postgres: # Nome do serviço
     image: bitnami/postgresql:latest
     ports:
-      - '5432:5432'
+      - '5432:5432' # Porta do banco de dados
     environment:
-      - POSTGRES_USER=docker
-      - POSTGRES_PASSWORD=docker
-      - POSTGRES_DB=polls
+      - POSTGRES_USER=docker # Usuário do banco de dados
+      - POSTGRES_PASSWORD=docker # Senha do banco de dados
+      - POSTGRES_DB=polls # Nome do banco de dados
     volumes:
-      - polls_pg_data:/bitnami/postgresql
+      - polls_pg_data:/bitnami/postgresql # Volume para persistir os dados
 
-  redis:
-    image: bitnami/redis:latest
+  redis: # Nome do serviço
+    image: bitnami/redis:latest 
     environment:
-      - ALLOW_EMPTY_PASSWORD=yes
+      - ALLOW_EMPTY_PASSWORD=yes # Permite senha vazia
     ports:
-      - '6379:6379'
+      - '6379:6379' # Porta do banco de dados
     volumes:
-      - 'polls_redis_data:/bitnami/redis/data'
+      - 'polls_redis_data:/bitnami/redis/data' # Volume para persistir os dados
 
-volumes:
-  polls_pg_data:
+volumes: # Volumes para persistir os dados
+  polls_pg_data: 
   polls_redis_data:
