@@ -4,12 +4,10 @@ import { z } from "zod";
 
 export async function createPoll(app: FastifyInstance) {
   app.post("/polls", async (request, reply) => {
-    const createPollBody = z.object({
+    const { title, options } = z.object({
       title: z.string(),
       options: z.array(z.string()),
-    });
-
-    const { title, options } = createPollBody.parse(request.body);
+    }).parse(request.body);
 
     const poll = await p.poll.create({
       data: {
