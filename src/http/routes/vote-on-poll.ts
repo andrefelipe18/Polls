@@ -38,7 +38,16 @@ export async function voteOnPoll(app: FastifyInstance) {
           },
         });
 
-        await redis.zincrby(pollId, -1, userPreviousVote.pollOptionId);
+        const votes = await redis.zincrby(
+          pollId,
+          -1,
+          userPreviousVote.pollOptionId
+        );
+
+        votingPubSub.publish(pollId, {
+          pollOptionId: userPreviousVote.pollOptionId,
+          voteCount: Number(votes),
+        });
       } else if (userPreviousVote) {
         return reply.code(400).send({
           message: "User already voted",
@@ -65,11 +74,11 @@ export async function voteOnPoll(app: FastifyInstance) {
       },
     });
 
-    await redis.zincrby(pollId, 1, pollOptionId);
+    const voteCount = await redis.zincrby(pollId, 1, pollOptionId);
 
     votingPubSub.publish(pollId, {
       pollOptionId,
-      voteCount: 1,
+      voteCount: Number(voteCount),
     });
 
     return reply.code(201).send({
