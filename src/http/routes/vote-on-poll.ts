@@ -3,6 +3,7 @@ import p from "../../lib/prisma";
 import { z } from "zod";
 import { randomUUID } from "node:crypto";
 import { redis } from "../../lib/redis";
+import { votingPubSub } from "../../utils/VotingPubSub";
 
 export async function voteOnPoll(app: FastifyInstance) {
   app.post("/polls/:pollId/votes", async (request, reply) => {
@@ -65,6 +66,11 @@ export async function voteOnPoll(app: FastifyInstance) {
     });
 
     await redis.zincrby(pollId, 1, pollOptionId);
+
+    votingPubSub.publish(pollId, {
+      pollOptionId,
+      voteCount: 1,
+    });
 
     return reply.code(201).send({
       message: "Vote registered",
